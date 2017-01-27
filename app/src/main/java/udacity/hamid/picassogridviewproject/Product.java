@@ -1,5 +1,7 @@
 package udacity.hamid.picassogridviewproject;
 
+import static android.R.attr.name;
+
 /**
  * Created by temp on 25/01/2017.
  */
@@ -7,13 +9,17 @@ package udacity.hamid.picassogridviewproject;
 public class Product {
 
     private String image;
-    private String name;
-    private String price;
+    private String title;
+    private String releaseDate;
+    private String voteAvg;
+    private String plotSynopsis;
 
-    public Product(String image, String name, String price) {
+    public Product(String image, String title, String releaseDate, String voteAvg, String plotSynopsis) {
         this.image = image;
-        this.name = name;
-        this.price = price;
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.voteAvg = voteAvg;
+        this.plotSynopsis = plotSynopsis;
     }
 
     public String getImage() {
@@ -24,19 +30,35 @@ public class Product {
         this.image = image;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getPrice() {
-        return price;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getVoteAvg() {
+        return voteAvg;
+    }
+
+    public void setVoteAvg(String voteAvg) {
+        this.voteAvg = voteAvg;
+    }
+
+    public String getPlotSynopsis() {
+        return plotSynopsis;
+    }
+
+    public void setPlotSynopsis(String plotSynopsis) {
+        this.plotSynopsis = plotSynopsis;
     }
 }

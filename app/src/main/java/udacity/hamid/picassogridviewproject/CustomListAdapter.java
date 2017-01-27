@@ -42,15 +42,7 @@ public class CustomListAdapter extends ArrayAdapter<Product> {
 
         Product product= getItem(position);
         ImageView imageView=(ImageView)convertView.findViewById(R.id.imageViewProduct);
-        TextView txtName=(TextView)convertView.findViewById(R.id.txtName);
-        TextView txtPrice=(TextView)convertView.findViewById(R.id.txtPrice);
-
         Picasso.with(context).load(product.getImage()).into(imageView);
-        txtName.setText(product.getName());
-        txtPrice.setText(product.getPrice());
-
-
-
         return convertView;
     }
 }

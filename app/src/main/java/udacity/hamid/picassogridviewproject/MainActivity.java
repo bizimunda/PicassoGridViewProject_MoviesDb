@@ -1,13 +1,15 @@
 package udacity.hamid.picassogridviewproject;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,38 +22,61 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<Product> arrayList;
-    ListView lv;
+    GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         arrayList = new ArrayList<>();
-        lv = (ListView) findViewById(R.id.listView);
+        gridView = (GridView) findViewById(R.id.gridView);
 
+        popular();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+
+                Product product = (Product) gridView.getItemAtPosition(position);
+                String image = product.getImage().toString();
+
+                String title = product.getTitle();
+                String releaseDate = product.getReleaseDate();
+                String voteAvg = product.getVoteAvg();
+                String plotSynopsis = product.getPlotSynopsis();
+
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("k_image", image);
+                intent.putExtra("k_title", title);
+                intent.putExtra("k_releaseDate", releaseDate);
+                intent.putExtra("k_voteAvg", voteAvg);
+                intent.putExtra("k_plotSynopsis", plotSynopsis);
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    private void popular() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new ReadJSON().execute("http://api.themoviedb.org/3/movie/top_rated?api_key=89f8031fa012853efc9498472830528d");
+            }
+        });
+    }
+
+    private void topRated() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new ReadJSON().execute("http://api.themoviedb.org/3/movie/popular?api_key=89f8031fa012853efc9498472830528d");
             }
         });
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-                Product returnProduct = (Product) lv.getItemAtPosition(position);
-                Toast.makeText(MainActivity.this, "Position " + position + " : " + returnProduct.getPrice(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-
     }
 
     class ReadJSON extends AsyncTask<String, Integer, String> {
@@ -70,22 +95,21 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject productObject = jsonArray.getJSONObject(i);
                     String poster_path = productObject.getString("poster_path");
                     String complete_url = "https://image.tmdb.org/t/p/w185/" + poster_path;
-
                     arrayList.add(new Product(
                             complete_url,
                             productObject.getString("original_title"),
-                            productObject.getString("original_language")));
-                }
+                            productObject.getString("release_date"),
+                            productObject.getString("vote_average"),
+                            productObject.getString("overview")
 
+                    ));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             CustomListAdapter adapter = new CustomListAdapter
                     (MainActivity.this, R.layout.custom_list_layout, arrayList);
-            lv.setAdapter(adapter);
-
-
+            gridView.setAdapter(adapter);
         }
     }
 
@@ -106,5 +130,31 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return content.toString();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        if (id == R.id.action_top_rated) {
+            //// TODO: 27/01/2017  popular method to add
+            topRated();
+            Log.i("MainActivity", "" + id);
+
+        }
+        if (id == R.id.action_mostPopular) {
+            //// TODO: 27/01/2017  popular method to add
+            popular();
+            Log.i("MainActivity", "" + id);
+        }
+
+        return super.onOptionsItemSelected(item);
+
     }
 }
