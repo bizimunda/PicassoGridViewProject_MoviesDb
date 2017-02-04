@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         tvPopularAndRated= (TextView) findViewById(R.id.tv_popular_and_topRated);
 
 
-        popular();
+        topRated();
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void popular() {
-        tvPopularAndRated.setText("Popular");
+    private void topRated() {
+        tvPopularAndRated.setText("Top Rated");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -76,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         gridUpdate();
     }
 
-    private void topRated() {
-        tvPopularAndRated.setText("Top rated");
+    private void popular() {
+        tvPopularAndRated.setText("Popular");
         adapter.clear();
         adapter.notifyDataSetChanged();
         runOnUiThread(new Runnable() {
@@ -158,12 +158,12 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_top_rated) {
-            topRated();
+            popular();
         }
         if (id == R.id.action_mostPopular) {
             adapter.clear();
             adapter.notifyDataSetChanged();
-            popular();
+            topRated();
         }
         return super.onOptionsItemSelected(item);
 
