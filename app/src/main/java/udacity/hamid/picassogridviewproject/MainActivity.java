@@ -4,17 +4,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-
+import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,10 +21,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
+
+
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Product> arrayList;
-    GridView gridView;
+    private ArrayList<Product> arrayList;
+    private GridView gridView;
+    private CustomListAdapter adapter;
+    private TextView tvPopularAndRated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         arrayList = new ArrayList<>();
         gridView = (GridView) findViewById(R.id.gridView);
+        tvPopularAndRated= (TextView) findViewById(R.id.tv_popular_and_topRated);
+
 
         popular();
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -62,21 +66,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void popular() {
+        tvPopularAndRated.setText("Popular");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new ReadJSON().execute("http://api.themoviedb.org/3/movie/top_rated?api_key=89f8031fa012853efc9498472830528d");
             }
         });
+        gridUpdate();
     }
 
     private void topRated() {
+        tvPopularAndRated.setText("Top rated");
+        adapter.clear();
+        adapter.notifyDataSetChanged();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new ReadJSON().execute("http://api.themoviedb.org/3/movie/popular?api_key=89f8031fa012853efc9498472830528d");
             }
         });
+        gridUpdate();
     }
 
     class ReadJSON extends AsyncTask<String, Integer, String> {
@@ -107,11 +117,16 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            CustomListAdapter adapter = new CustomListAdapter
-                    (MainActivity.this, R.layout.custom_list_layout, arrayList);
-            gridView.setAdapter(adapter);
+            gridUpdate();
         }
     }
+
+    private void gridUpdate() {
+        adapter = new CustomListAdapter
+                (MainActivity.this, R.layout.custom_list_layout, arrayList);
+        gridView.setAdapter(adapter);
+    }
+
 
     private static String readURL(String theUrl) {
         StringBuilder content = new StringBuilder();
@@ -143,17 +158,13 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_top_rated) {
-            //// TODO: 27/01/2017  popular method to add
             topRated();
-            Log.i("MainActivity", "" + id);
-
         }
         if (id == R.id.action_mostPopular) {
-            //// TODO: 27/01/2017  popular method to add
+            adapter.clear();
+            adapter.notifyDataSetChanged();
             popular();
-            Log.i("MainActivity", "" + id);
         }
-
         return super.onOptionsItemSelected(item);
 
     }
